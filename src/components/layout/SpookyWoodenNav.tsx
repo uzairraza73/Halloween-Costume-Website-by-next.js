@@ -3,40 +3,64 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShoppingCart, Search, Menu, X, ChevronDown, ChevronRight } from "lucide-react";
+import { ShoppingCart, Search, Menu, X, ChevronDown } from "lucide-react";
 import { useStore, useCartCount } from "@/store/useStore";
 import { AnimatePresence, motion } from "framer-motion";
 
-// ─── Costumes Mega Menu columns (exactly per spec) ───────────────────────────
-const COSTUMES_COLUMNS = [
+// Sub-categories exactly as shown in the user's reference image
+export const CATEGORY_COLUMNS = [
   {
     title: "Shop All Costume Characters",
     items: [
-      "Addams Family", "American Girl", "Barbie", "Beetlejuice", "Disney",
-      "Flintstones", "Ghostbusters", "Harry Potter", "Jurassic World",
-      "House of the Dragon", "K-Pop Demon Hunters", "Looney Tunes",
-      "Peanuts", "Scooby-Doo", "SpongeBob", "Teenage Mutant Ninja Turtles",
+      "Addams Family",
+      "American Girl",
+      "Barbie",
+      "Beetlejuice",
+      "Disney",
+      "Flintstones",
+      "Ghostbusters",
+      "Harry Potter",
+      "Jurassic World",
+      "House of the Dragon",
+      "K-Pop Demon Hunters",
+      "Looney Tunes",
+      "Peanuts",
+      "Scooby-Doo",
+      "SpongeBob",
+      "Teenage Mutant Ninja Turtles",
     ],
   },
   {
     title: "Shop All Costume Themes",
     items: [
-      "Couple, Group & Costume Sets", "Classics", "Career & Occupation",
-      "Candy Brands", "Horror & Fright", "Inflatable", "Funny",
-      "Superheroes", "Wheelchair & Wagon Covers",
+      "Couple, Group & Costume Sets",
+      "Classics",
+      "Career & Occupation",
+      "Candy Brands",
+      "Horror & Freight",
+      "Inflatable",
+      "Funny",
+      "Superheros",
+      "Wheelchair & Wagon Covers",
     ],
   },
   {
     title: "Shop All Adult Costumes",
     items: [
-      "Women's Costumes", "Men's Costumes", "Unisex Costumes",
-      "Plus Size Costumes", "Couple & Group Costumes", "Sexy Costumes",
+      "Women's Costumes",
+      "Men's Costumes",
+      "Unisex Costumes",
+      "Plus Size Costumes",
+      "Couple & Group Costumes",
+      "Sexy Costumes",
     ],
   },
   {
     title: "Shop All Kids' Costumes",
     items: [
-      "Baby & Infant Costumes", "Boys' Costumes", "Girls' Costumes",
+      "Baby & Infant Costumes",
+      "Boys' Costumes",
+      "Girls' Costumes",
     ],
   },
 ];
@@ -50,49 +74,58 @@ export function SpookyWoodenNav() {
   const { toggleCart, toggleSearch } = useStore();
   const cartCount = useCartCount();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [costumeOpen, setCostumeOpen] = useState(false);
-  const costumeRef = useRef<HTMLDivElement>(null);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const categoriesRef = useRef<HTMLDivElement>(null);
   const closeTimer = useRef<NodeJS.Timeout | null>(null);
 
   // Close dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (costumeRef.current && !costumeRef.current.contains(e.target as Node)) {
-        setCostumeOpen(false);
+      if (categoriesRef.current && !categoriesRef.current.contains(e.target as Node)) {
+        setCategoriesOpen(false);
       }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  const openCategories = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setCategoriesOpen(true);
+  };
+  const scheduleCategoriesClose = () => {
+    closeTimer.current = setTimeout(() => setCategoriesOpen(false), 220);
+  };
+  const cancelCategoriesClose = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+  };
+
+  // Nav items matching user image order: HOME, SHOP ALL, SALES, WATCHLIST, CATEGORIES v
   const navLinks = [
-    { label: "Home", href: "/" },
-    { label: "Shop All", href: "/shop" },
-    // Costumes handled separately below
-    { label: "Sales", href: "/shop?filter=sales" },
-    { label: "Watchlist", href: "/wishlist" },
+    { label: "HOME", href: "/" },
+    { label: "SHOP ALL", href: "/shop" },
+    { label: "SALES", href: "/shop?filter=sales" },
+    { label: "WATCHLIST", href: "/wishlist" },
   ];
 
-  const openCostume = () => {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-    setCostumeOpen(true);
-  };
-  const scheduleCostumeClose = () => {
-    closeTimer.current = setTimeout(() => setCostumeOpen(false), 200);
-  };
-  const cancelCostumeClose = () => {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-  };
-
   return (
-    <div className="relative z-30 w-full max-w-5xl mx-auto px-4">
+    <div className="relative z-50 w-full max-w-6xl mx-auto px-4">
       {/* ── Hanging chains ──────────────────────────────────── */}
-      <div className="flex justify-between px-14 sm:px-20 pointer-events-none -mb-0.5 relative z-10">
+      <div className="flex justify-between px-10 sm:px-20 pointer-events-none -mb-0.5 relative z-10">
         {[0, 1].map((side) => (
           <div key={side} className="flex flex-col items-center">
-            <div className="w-2.5 h-4 border-2 rounded-full mb-0.5" style={{ borderColor: "#7a4e2a", background: "#1a0d05" }} />
-            <div className="w-2.5 h-4 border-2 rounded-full -mt-1.5" style={{ borderColor: "#7a4e2a", background: "#1a0d05" }} />
-            <div className="w-3 h-3 rounded-full -mt-1" style={{ background: "#6b3e1c", border: "1px solid #4a2910" }} />
+            <div
+              className="w-2.5 h-4 border-2 rounded-full mb-0.5"
+              style={{ borderColor: "#7a4e2a", background: "#1a0d05" }}
+            />
+            <div
+              className="w-2.5 h-4 border-2 rounded-full -mt-1.5"
+              style={{ borderColor: "#7a4e2a", background: "#1a0d05" }}
+            />
+            <div
+              className="w-3 h-3 rounded-full -mt-1"
+              style={{ background: "#6b3e1c", border: "1px solid #4a2910" }}
+            />
           </div>
         ))}
       </div>
@@ -100,138 +133,124 @@ export function SpookyWoodenNav() {
       {/* ── Wooden Plank Bar ────────────────────────────────── */}
       <nav
         aria-label="Main Navigation"
-        className="wooden-plank relative overflow-hidden flex items-center justify-between px-5 sm:px-8 py-3"
-        style={{ borderRadius: 14 }}
+        className="wooden-plank relative overflow-visible flex items-center justify-between px-6 sm:px-10 py-3"
+        style={{ borderRadius: 16 }}
       >
         {/* Wood corner rivets */}
-        {["top-2 left-3", "bottom-2 left-3", "top-2 right-3", "bottom-2 right-3"].map((pos) => (
-          <div
-            key={pos}
-            className={`absolute ${pos} w-2 h-2 rounded-full`}
-            style={{ background: "#1a0b04", border: "1px solid #6b3e1c" }}
-          />
-        ))}
+        {["top-2.5 left-3", "bottom-2.5 left-3", "top-2.5 right-3", "bottom-2.5 right-3"].map(
+          (pos) => (
+            <div
+              key={pos}
+              className={`absolute ${pos} w-2.5 h-2.5 rounded-full`}
+              style={{
+                background: "#1a0b04",
+                border: "1px solid #8B5A2B",
+                boxShadow: "inset 0 1px 2px rgba(0,0,0,0.8)",
+              }}
+            />
+          )
+        )}
 
-        {/* ── Desktop Nav Links ──────────────────────────────── */}
-        <div className="hidden md:flex items-center gap-5 lg:gap-7 relative z-10">
+        {/* ── Desktop Nav Links (HOME, SHOP ALL, SALES, WATCHLIST, CATEGORIES v) ──────────────── */}
+        <div className="hidden md:flex items-center gap-6 lg:gap-8 relative z-10">
           {navLinks.map((link) => {
-            const isShopAll = link.label === "Shop All";
             const isActive = pathname === link.href;
             return (
               <Link
                 key={link.label}
                 href={link.href}
-                className="relative group font-bold tracking-wide transition-all duration-200"
+                className="relative group font-bold tracking-wider transition-all duration-200"
                 style={{
                   fontFamily: "'Creepster', 'Henny Penny', cursive, sans-serif",
-                  fontSize: "clamp(0.95rem, 1.6vw, 1.15rem)",
-                  color: isShopAll || isActive ? "#FF9D2E" : "#D4832A",
-                  letterSpacing: "0.04em",
-                  filter: isShopAll || isActive ? "drop-shadow(0 0 8px rgba(255,157,46,0.7))" : "none",
+                  fontSize: "clamp(1rem, 1.7vw, 1.25rem)",
+                  color: isActive ? "#FF9D2E" : "#D4832A",
+                  letterSpacing: "0.06em",
+                  filter: isActive
+                    ? "drop-shadow(0 0 10px rgba(255,157,46,0.85))"
+                    : "drop-shadow(0 1px 2px rgba(0,0,0,0.9))",
                 }}
               >
                 {link.label}
-                {(isShopAll || isActive) && (
+                {isActive && (
                   <span
-                    className="block h-[2px] w-full mt-0.5"
+                    className="block h-[2.5px] w-full mt-0.5 rounded-full"
                     style={{
                       background: "linear-gradient(90deg, transparent, #FF9D2E, transparent)",
-                      boxShadow: "0 0 8px #FF9D2E",
+                      boxShadow: "0 0 10px #FF9D2E",
                     }}
                   />
                 )}
                 <span
                   className="absolute -bottom-1 left-0 h-[2px] w-0 group-hover:w-full transition-all duration-200"
-                  style={{ background: "#FF9D2E", opacity: 0.7 }}
+                  style={{ background: "#FF9D2E", opacity: 0.8 }}
                 />
               </Link>
             );
           })}
 
-          {/* ── Costumes with mega-dropdown ─────────────────── */}
+          {/* ── CATEGORIES with Mega Dropdown ─────────────────── */}
           <div
-            ref={costumeRef}
+            ref={categoriesRef}
             className="relative"
-            onMouseEnter={openCostume}
-            onMouseLeave={scheduleCostumeClose}
+            onMouseEnter={openCategories}
+            onMouseLeave={scheduleCategoriesClose}
           >
             <button
-              onClick={() => setCostumeOpen((v) => !v)}
-              className="flex items-center gap-1.5 font-bold tracking-wide transition-all duration-200"
+              onClick={() => setCategoriesOpen((v) => !v)}
+              className="flex items-center gap-1.5 font-bold tracking-wider transition-all duration-200"
               style={{
-                fontFamily: "'Creepster', cursive, sans-serif",
-                fontSize: "clamp(0.95rem, 1.6vw, 1.15rem)",
-                color: costumeOpen ? "#FF9D2E" : "#D4832A",
-                letterSpacing: "0.04em",
-                filter: costumeOpen ? "drop-shadow(0 0 8px rgba(255,157,46,0.7))" : "none",
+                fontFamily: "'Creepster', 'Henny Penny', cursive, sans-serif",
+                fontSize: "clamp(1rem, 1.7vw, 1.25rem)",
+                color: categoriesOpen ? "#FF9D2E" : "#D4832A",
+                letterSpacing: "0.06em",
+                filter: categoriesOpen
+                  ? "drop-shadow(0 0 10px rgba(255,157,46,0.85))"
+                  : "drop-shadow(0 1px 2px rgba(0,0,0,0.9))",
               }}
             >
-              Costumes
+              <span>CATEGORIES</span>
               <ChevronDown
                 className="w-4 h-4 transition-transform duration-200"
-                style={{ transform: costumeOpen ? "rotate(180deg)" : "rotate(0deg)", color: "#FF9D2E" }}
+                style={{
+                  transform: categoriesOpen ? "rotate(180deg)" : "rotate(0deg)",
+                  color: "#FF9D2E",
+                }}
               />
             </button>
 
-            {/* ── 4-Column Costumes Mega Menu ─────────────────── */}
+            {/* ── 4-Column Clean White Dropdown matching User Image ── */}
             <AnimatePresence>
-              {costumeOpen && (
+              {categoriesOpen && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.97 }}
+                  initial={{ opacity: 0, y: 10, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.98 }}
                   transition={{ duration: 0.18, ease: "easeOut" }}
-                  onMouseEnter={cancelCostumeClose}
-                  onMouseLeave={scheduleCostumeClose}
-                  className="absolute left-0 top-full pt-3 z-50"
-                  style={{ minWidth: 680 }}
+                  onMouseEnter={cancelCategoriesClose}
+                  onMouseLeave={scheduleCategoriesClose}
+                  className="fixed left-1/2 -translate-x-1/2 top-20 sm:top-24 z-50 w-[95vw] max-w-6xl"
                 >
                   <div
-                    className="rounded-2xl p-5 shadow-2xl"
+                    className="bg-white text-gray-900 rounded-xl p-8 sm:p-10 shadow-2xl border border-gray-200"
                     style={{
-                      background: "rgba(14,9,22,0.98)",
-                      border: "1.5px solid rgba(255,117,24,0.3)",
-                      backdropFilter: "blur(20px)",
-                      boxShadow: "0 25px 60px rgba(0,0,0,0.9), 0 0 25px rgba(255,117,24,0.15)",
+                      boxShadow: "0 25px 60px rgba(0,0,0,0.4), 0 0 40px rgba(0,0,0,0.2)",
                     }}
                   >
-                    {/* Header */}
-                    <div className="flex items-center justify-between mb-4 pb-3" style={{ borderBottom: "1px solid rgba(255,117,24,0.2)" }}>
-                      <span className="font-extrabold text-sm uppercase tracking-widest" style={{ color: "#FF7518" }}>
-                        🎃 Shop All Costumes
-                      </span>
-                      <Link
-                        href="/shop?category=costumes"
-                        onClick={() => setCostumeOpen(false)}
-                        className="flex items-center gap-1 text-xs font-bold hover:opacity-80 transition-opacity"
-                        style={{ color: "#FF9D2E" }}
-                      >
-                        View All <ChevronRight className="w-3.5 h-3.5" />
-                      </Link>
-                    </div>
-
-                    {/* 4 columns */}
-                    <div className="grid grid-cols-4 gap-4">
-                      {COSTUMES_COLUMNS.map((col) => (
-                        <div key={col.title}>
-                          <p
-                            className="text-[10px] font-extrabold uppercase tracking-widest mb-2.5"
-                            style={{ color: "#FF7518" }}
-                          >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                      {CATEGORY_COLUMNS.map((col) => (
+                        <div key={col.title} className="flex flex-col">
+                          <h3 className="font-bold text-sm sm:text-base text-gray-950 mb-3 tracking-tight">
                             {col.title}
-                          </p>
-                          <ul className="space-y-1.5">
+                          </h3>
+                          <ul className="space-y-2">
                             {col.items.map((item) => (
                               <li key={item}>
                                 <Link
                                   href={`/shop?category=${toSlug(item)}`}
-                                  onClick={() => setCostumeOpen(false)}
-                                  className="group flex items-center gap-1 text-xs transition-all duration-150"
-                                  style={{ color: "rgba(220,200,255,0.75)" }}
+                                  onClick={() => setCategoriesOpen(false)}
+                                  className="text-xs sm:text-[13px] text-gray-700 hover:text-pumpkin hover:underline transition-colors block leading-relaxed"
                                 >
-                                  <span className="group-hover:translate-x-1 group-hover:text-[#FF9D2E] transition-all">
-                                    {item}
-                                  </span>
+                                  {item}
                                 </Link>
                               </li>
                             ))}
@@ -258,18 +277,21 @@ export function SpookyWoodenNav() {
           </button>
           <span
             className="ml-2 font-bold"
-            style={{ fontFamily: "'Creepster', cursive", fontSize: "1rem", color: "#FF9D2E" }}
+            style={{ fontFamily: "'Creepster', cursive", fontSize: "1.1rem", color: "#FF9D2E" }}
           >
-            Halloween Haven
+            HALLOWEEN
           </span>
         </div>
 
-        {/* ── Icons: Cart + Search ──────────────────────────── */}
-        <div className="flex items-center gap-4 sm:gap-5 relative z-10">
+        {/* ── Icons: Cart + Search (Right side) ──────────────── */}
+        <div className="flex items-center gap-5 sm:gap-6 relative z-10">
           <button
             onClick={toggleCart}
             className="relative transition-all duration-200 hover:scale-110"
-            style={{ color: "#FF9D2E", filter: "drop-shadow(0 0 8px rgba(255,157,46,0.5))" }}
+            style={{
+              color: "#FF9D2E",
+              filter: "drop-shadow(0 0 8px rgba(255,157,46,0.6))",
+            }}
             aria-label="Cart"
           >
             <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.2]" />
@@ -290,7 +312,10 @@ export function SpookyWoodenNav() {
           <button
             onClick={toggleSearch}
             className="transition-all duration-200 hover:scale-110"
-            style={{ color: "#FF9D2E", filter: "drop-shadow(0 0 8px rgba(255,157,46,0.5))" }}
+            style={{
+              color: "#FF9D2E",
+              filter: "drop-shadow(0 0 8px rgba(255,157,46,0.6))",
+            }}
             aria-label="Search"
           >
             <Search className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.4]" />
@@ -301,13 +326,13 @@ export function SpookyWoodenNav() {
       {/* ── Mobile dropdown ──────────────────────────────────── */}
       {mobileOpen && (
         <div
-          className="md:hidden mt-2 rounded-xl p-4 space-y-2 relative z-30"
+          className="md:hidden mt-2 rounded-xl p-4 space-y-2 relative z-50 shadow-2xl"
           style={{
-            background: "rgba(14,9,22,0.97)",
+            background: "rgba(14,9,22,0.98)",
             border: "1px solid rgba(255,117,24,0.3)",
           }}
         >
-          {[...navLinks, { label: "Costumes", href: "/shop?category=costumes" }].map((link) => (
+          {navLinks.map((link) => (
             <Link
               key={link.label}
               href={link.href}
@@ -321,6 +346,30 @@ export function SpookyWoodenNav() {
               {link.label}
             </Link>
           ))}
+          <div className="pt-2 border-t border-white/10">
+            <p className="text-xs uppercase tracking-wider text-pumpkin font-bold px-3 py-1">
+              Categories:
+            </p>
+            <div className="max-h-60 overflow-y-auto space-y-1 px-3">
+              {CATEGORY_COLUMNS.flatMap((c) => c.items).slice(0, 12).map((item) => (
+                <Link
+                  key={item}
+                  href={`/shop?category=${toSlug(item)}`}
+                  onClick={() => setMobileOpen(false)}
+                  className="block text-xs py-1 text-gray-300 hover:text-pumpkin"
+                >
+                  • {item}
+                </Link>
+              ))}
+              <Link
+                href="/shop"
+                onClick={() => setMobileOpen(false)}
+                className="block text-xs font-bold text-pumpkin pt-2"
+              >
+                View All Categories →
+              </Link>
+            </div>
+          </div>
         </div>
       )}
     </div>

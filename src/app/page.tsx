@@ -7,7 +7,6 @@ import Image from "next/image";
 import { ArrowRight, Star, TrendingUp, Sparkles, ShoppingCart, Flame } from "lucide-react";
 import { CATEGORIES, PRODUCTS } from "@/data/products";
 import { ProductCard } from "@/components/products/ProductCard";
-import { SpookyWoodenNav } from "@/components/layout/SpookyWoodenNav";
 
 // ============ Floating ember particles ============
 const EMBER_POSITIONS = [
@@ -122,15 +121,10 @@ function HeroSection() {
           />
         ))}
 
-        {/* ─ TOP: Wooden Nav inside Hero ─ */}
-        <div className="relative z-30 pt-4 pb-2">
-          <SpookyWoodenNav />
-        </div>
-
         {/* ─ HERO CONTENT: Split layout ─ */}
         <motion.div
           style={{ y }}
-          className="relative z-20 max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 grid grid-cols-1 lg:grid-cols-2 items-center gap-0 pt-10 pb-10 lg:pt-16 lg:pb-20"
+          className="relative z-20 max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 grid grid-cols-1 lg:grid-cols-2 items-center gap-0 pt-16 pb-12 lg:pt-24 lg:pb-24"
         >
           {/* LEFT: Promotional text */}
           <motion.div
@@ -155,45 +149,26 @@ function HeroSection() {
               <Sparkles className="w-3.5 h-3.5 text-[#FF7518]" />
             </motion.div>
 
-            {/* 50% OFF */}
+            {/* ALL HALLOWEEN GEAR headline without 50% OFF */}
             <motion.div
-              variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
+              className="mb-8"
             >
               <h1
-                className="font-black uppercase leading-none tracking-tight"
+                className="font-black uppercase leading-tight"
                 style={{
                   fontFamily: "'Bebas Neue', Impact, sans-serif",
-                  fontSize: "clamp(4rem, 9vw, 7rem)",
+                  fontSize: "clamp(3rem, 6.5vw, 5.5rem)",
                   background: "linear-gradient(180deg, #FFF176 0%, #FFA000 40%, #E65100 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
-                  textShadow: "none",
                   filter: "drop-shadow(0 4px 20px rgba(255,140,0,0.5))",
-                  letterSpacing: "0.02em",
-                }}
-              >
-                50% OFF
-              </h1>
-            </motion.div>
-
-            {/* ALL HALLOWEEN GEAR */}
-            <motion.div
-              variants={{ hidden: { opacity: 0, y: 18 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
-              className="-mt-2 mb-7"
-            >
-              <h2
-                className="font-black uppercase leading-tight"
-                style={{
-                  fontFamily: "'Bebas Neue', Impact, sans-serif",
-                  fontSize: "clamp(1.75rem, 4vw, 3.2rem)",
-                  color: "#FFC44D",
-                  textShadow: "0 2px 16px rgba(255,160,0,0.55), 0 1px 4px rgba(0,0,0,0.9)",
-                  letterSpacing: "0.07em",
+                  letterSpacing: "0.04em",
                 }}
               >
                 ALL HALLOWEEN GEAR!
-              </h2>
+              </h1>
             </motion.div>
 
             {/* Shop Now button – carved pumpkin style */}

@@ -35,19 +35,19 @@ function HeroSection() {
       title: "Spooky Decor",
       href: "/shop?filter=spooky-decor",
       image: "/images/decor-enhanced/60-inch Bloody Window Poster Set.webp",
-      tag: "31 Exclusive Decor Items",
+      tag: "33 Exclusive Decor Items",
     },
     {
       title: "Costumes & Masks",
-      href: "/shop?category=witchcraft",
+      href: "/shop?filter=costumes-and-masks",
       image: "/images/costumes_masks.jpg",
       tag: "Witches & Reapers",
     },
     {
       title: "Creepy Treats",
-      href: "/shop?category=accessories",
+      href: "/shop?filter=creepy-treats",
       image: "/images/creepy_treats.jpg",
-      tag: "Candy & Goodie Bags",
+      tag: "20 Sweet & Scary Treats",
     },
   ];
 

@@ -83,6 +83,10 @@ function ShopContent() {
       list = list.filter((p) => (p.originalPrice && p.originalPrice > p.price) || p.tags.includes("sale"));
     } else if (filterParam === "spooky-decor") {
       list = list.filter((p) => p.tags.includes("spooky-decor"));
+    } else if (filterParam === "creepy-treats") {
+      list = list.filter((p) => p.tags.includes("creepy-treats"));
+    } else if (filterParam === "costumes-and-masks") {
+      list = list.filter((p) => p.tags.includes("costumes-and-masks") || p.category === "costumes" || p.category === "kids" || p.category === "witchcraft" || p.category === "masks");
     }
 
     if (query) {
@@ -169,6 +173,10 @@ function ShopContent() {
           <h1 className="section-title text-5xl text-white">
             {filterParam === "spooky-decor" ? (
               <>SPOOKY <span className="gradient-text-pumpkin">DECOR</span></>
+            ) : filterParam === "creepy-treats" ? (
+              <>CREEPY <span className="gradient-text-pumpkin">TREATS</span></>
+            ) : filterParam === "costumes-and-masks" ? (
+              <>COSTUMES & <span className="gradient-text-pumpkin">MASKS</span></>
             ) : filterParam === "sale" || filterParam === "sales" ? (
               <>FLASH <span className="gradient-text-pumpkin">SALES</span></>
             ) : (
@@ -178,6 +186,10 @@ function ShopContent() {
           <p className="text-muted mt-2">
             {filterParam === "spooky-decor"
               ? `${results.length} spooky decor props and lighting found to transform your haunted home.`
+              : filterParam === "creepy-treats"
+              ? `${results.length} eerie goodies, party treat sacks, and candy favorites found.`
+              : filterParam === "costumes-and-masks"
+              ? `${results.length} costumes and character masks found to terrorize the night.`
               : filterParam === "sale" || filterParam === "sales"
               ? `${results.length} discounted Halloween items on special markdown.`
               : `${results.length} costumes found — each one more haunting than the last.`}
@@ -372,7 +384,7 @@ function ShopContent() {
             ) : (
               <div
                 className={`grid gap-4 sm:gap-5 ${
-                  filterParam === "spooky-decor"
+                  filterParam === "spooky-decor" || filterParam === "creepy-treats"
                     ? showFilters
                       ? "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
                       : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5"
@@ -387,7 +399,7 @@ function ShopContent() {
                       key={product.id}
                       product={product}
                       index={i}
-                      compact={filterParam === "spooky-decor"}
+                      compact={filterParam === "spooky-decor" || filterParam === "creepy-treats"}
                     />
                   ))}
                 </AnimatePresence>

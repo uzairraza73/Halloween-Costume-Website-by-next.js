@@ -35,7 +35,7 @@ function HeroSection() {
       title: "Spooky Decor",
       href: "/shop?filter=spooky-decor",
       image: "/images/decor-enhanced/60-inch Bloody Window Poster Set.webp",
-      tag: "16 Exclusive Decor Items",
+      tag: "31 Exclusive Decor Items",
     },
     {
       title: "Costumes & Masks",

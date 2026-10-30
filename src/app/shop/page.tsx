@@ -79,8 +79,10 @@ function ShopContent() {
 
     if (filterParam === "bestsellers") {
       list = list.filter((p) => p.isBestSeller);
-    } else if (filterParam === "sale") {
-      list = list.filter((p) => p.originalPrice && p.originalPrice > p.price);
+    } else if (filterParam === "sale" || filterParam === "sales") {
+      list = list.filter((p) => (p.originalPrice && p.originalPrice > p.price) || p.tags.includes("sale"));
+    } else if (filterParam === "spooky-decor") {
+      list = list.filter((p) => p.tags.includes("spooky-decor"));
     }
 
     if (query) {
@@ -97,19 +99,32 @@ function ShopContent() {
     if (selectedCategories.length > 0) {
       list = list.filter((p) =>
         selectedCategories.some((cat) => {
-          const catNorm = cat.toLowerCase().replace(/[-_]/g, " ");
-          const catRaw = cat.toLowerCase();
-          return (
-            p.category.toLowerCase() === catRaw ||
-            p.category.toLowerCase().includes(catNorm) ||
-            p.tags.some(
-              (t) =>
-                t.toLowerCase() === catRaw ||
-                t.toLowerCase().includes(catNorm) ||
-                catNorm.includes(t.toLowerCase())
-            ) ||
-            p.name.toLowerCase().includes(catNorm)
-          );
+          const catNorm = cat.toLowerCase().replace(/[-_&]/g, " ").trim();
+          const catRaw = cat.toLowerCase().trim();
+          const pCat = p.category.toLowerCase().replace(/[-_&]/g, " ").trim();
+          const pName = p.name.toLowerCase();
+          const pDesc = p.description.toLowerCase();
+          const pTags = p.tags.map((t) => t.toLowerCase().replace(/[-_&]/g, " "));
+
+          // Direct category slug match
+          if (p.category.toLowerCase() === catRaw || pCat === catNorm) return true;
+
+          // Keyword or sub-category tag match
+          if (pTags.some((t) => t === catNorm || t.includes(catNorm) || catNorm.includes(t))) return true;
+
+          // Item name or description match
+          if (pName.includes(catNorm) || catNorm.split(" ").some((w) => w.length > 3 && pName.includes(w))) return true;
+          if (pDesc.includes(catNorm)) return true;
+
+          // Fallback theme matches
+          if (catRaw.includes("adult") || catRaw.includes("men") || catRaw.includes("women") || catRaw.includes("unisex")) {
+            return p.sizes.some((s) => ["S", "M", "L", "XL", "XXL"].includes(s));
+          }
+          if (catRaw.includes("kid") || catRaw.includes("baby") || catRaw.includes("boy") || catRaw.includes("girl")) {
+            return p.category === "kids" || p.tags.includes("kids") || p.sizes.some((s) => s.includes("T") || s.includes("M"));
+          }
+
+          return false;
         })
       );
     }
@@ -140,7 +155,7 @@ function ShopContent() {
     }
 
     return list;
-  }, [query, selectedCategories, priceRange, selectedSizes, sortBy]);
+  }, [query, selectedCategories, priceRange, selectedSizes, sortBy, filterParam]);
 
   return (
     <div className="min-h-screen pt-8 pb-24">
@@ -152,10 +167,20 @@ function ShopContent() {
           className="mb-8"
         >
           <h1 className="section-title text-5xl text-white">
-            THE <span className="gradient-text-pumpkin">COLLECTION</span>
+            {filterParam === "spooky-decor" ? (
+              <>SPOOKY <span className="gradient-text-pumpkin">DECOR</span></>
+            ) : filterParam === "sale" || filterParam === "sales" ? (
+              <>FLASH <span className="gradient-text-pumpkin">SALES</span></>
+            ) : (
+              <>THE <span className="gradient-text-pumpkin">COLLECTION</span></>
+            )}
           </h1>
           <p className="text-muted mt-2">
-            {results.length} costumes found — each one more haunting than the last.
+            {filterParam === "spooky-decor"
+              ? `${results.length} spooky decor props and lighting found to transform your haunted home.`
+              : filterParam === "sale" || filterParam === "sales"
+              ? `${results.length} discounted Halloween items on special markdown.`
+              : `${results.length} costumes found — each one more haunting than the last.`}
           </p>
         </motion.div>
 
@@ -346,15 +371,24 @@ function ShopContent() {
               </motion.div>
             ) : (
               <div
-                className={`grid gap-5 ${
-                  showFilters
+                className={`grid gap-4 sm:gap-5 ${
+                  filterParam === "spooky-decor"
+                    ? showFilters
+                      ? "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                      : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5"
+                    : showFilters
                     ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
                     : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
                 }`}
               >
                 <AnimatePresence mode="popLayout">
                   {results.map((product, i) => (
-                    <ProductCard key={product.id} product={product} index={i} />
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      index={i}
+                      compact={filterParam === "spooky-decor"}
+                    />
                   ))}
                 </AnimatePresence>
               </div>
